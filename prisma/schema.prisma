@@ -10,5 +10,8 @@ datasource db {
 
 model VideoProcess {
   id  Int   @id   @default(autoincrement())
+  video_id String
   processing_stage String
+
+  @@unique([video_id])
 }

@@ -1,8 +1,16 @@
 import { PrismaClient } from "@prisma/client"
-import { constants } from "buffer";
-import fs from 'fs';
-import path from 'path'
+const prisma = new PrismaClient()
+const processingProcess = {
+    'unprocessed': 'unprocessed',
+    'compressing': 'compressing',
+    'finished': 'finished',
+}
 
-export const  getHello =  () => {
-return 'Hello'
+export const fixedVideoProcessInDb =  async (UUID) => {
+    await prisma.videoProcess.create({
+        data: {
+            video_id: UUID,
+            processing_stage: processingProcess.unprocessed,
+        }
+    })
 }

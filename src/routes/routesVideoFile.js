@@ -1,8 +1,25 @@
 import express from 'express'
+import { fixedVideoProcessInDb } from '../controllers/controllersVideoFile.js';
 export const router = express.Router();
-import { getHello } from '../controllers/controllersVideoFile.js';
+import multer from 'multer'; 
 
-router.route('/file').post((req, res) => {
-    const hello = getHello();
-    res.send(hello).status(200)
+const UUIDVideo = crypto.randomUUID();
+const storage = multer.diskStorage({
+    destination: 'videos/',
+    filename: function (req, file, cb) {
+        cb(null,`${UUIDVideo}.mp4` )
+    }
 })
+
+const upload = multer({ storage })
+router.route('/file').post(upload.single('video'),async (req, res) => {
+    try {
+    fixedVideoProcessInDb(UUIDVideo)
+    res.json({ id: UUIDvideo }).status(200) 
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).send({ error: err.code })
+    }
+})
+
