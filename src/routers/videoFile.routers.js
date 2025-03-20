@@ -1,5 +1,5 @@
 import express from 'express'
-import {addVideoFile, deleteVideo } from '../controllers/controllersVideoFile.js';
+import {addVideoFile, deleteVideo } from '../services/videoFile.services.js';
 import multer from 'multer'; 
 
 export const router = express.Router();

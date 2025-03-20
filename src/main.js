@@ -1,6 +1,6 @@
 import express from 'express'
 import dotenv from "dotenv";
-import { router } from './routes/routesVideoFile.js';
+import { router } from './routers/videoFile.routers.js';
 
 dotenv.config()
 const app = express();
