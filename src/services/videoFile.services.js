@@ -45,3 +45,8 @@ export const deleteVideo = async (id)  => {
             await deleteVideoFile(videPath)
         })
 }
+
+export const startChangePermission = (newPermission) => {
+    
+
+}

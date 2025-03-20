@@ -12,7 +12,7 @@ model Video {
   id  Int   @id   @default(autoincrement())
   video_id String
   processing_stage ProcessingProcess @default(unprocessed)
-
+  processing_success ProcessingSuccess @default(null)
   @@unique([video_id])
 }
 
@@ -20,4 +20,10 @@ enum ProcessingProcess {
   unprocessed
   compressing
   finished
+}
+
+enum ProcessingSuccess {
+  null
+  true
+  false
 }
