@@ -8,10 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model VideoProcess {
+model Video {
   id  Int   @id   @default(autoincrement())
   video_id String
-  processing_stage String
+  processing_stage ProcessingProcess @default(unprocessed)
 
   @@unique([video_id])
+}
+
+enum ProcessingProcess {
+  unprocessed
+  compressing
+  finished
 }
