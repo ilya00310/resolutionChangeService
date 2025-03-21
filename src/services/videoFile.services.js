@@ -98,7 +98,7 @@ export const changePermission = async(newPermission,id) => {
     .on('end', async () =>   {
         try {
         await prisma.$transaction(async () => { 
-            await changeDbFromSuccessOrError(id)
+            await changeDbFromSuccessOrError()
             await deleteVideoFile(videoOldPath);
         });
         resolve()
