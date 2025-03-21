@@ -1,7 +1,7 @@
 import express from 'express'
-import {addVideoFile, deleteVideo, startChangePermission } from '../services/videoFile.services.js';
+import {addVideoFile, deleteVideo, changePermission, getFileInfo } from '../services/videoFile.services.js';
 import multer from 'multer'; 
-import { body, validationResult, checkSchema } from 'express-validator'
+import { validationResult, checkSchema } from 'express-validator'
 import { newPermissionSchema } from '../../schema/newPermission.schema.js';
 
 export const router = express.Router();
@@ -32,14 +32,21 @@ router.route('/:id').delete(async (req,res) => {
 
 router.route('/:id').patch(checkSchema(newPermissionSchema),async (req,res) => {
     try {
+    const { id } = req.params;
      const isValidatePermission = validationResult(req);
      if (!isValidatePermission.isEmpty()){
         throw (false)
      }
      const newPermission = req.body;
-     await startChangePermission(newPermission)
+      changePermission(newPermission,id)
      res.json({success: true}).status(200)
-    }catch (err) {
+    }catch{
         res.json({success: false}).status(200)
     }
+})
+
+router.route('/:id').get(async (req,res) => {
+    const { id } = req.params;
+    const fileInfo = await getFileInfo(id);
+    res.json(fileInfo).status(200)
 })
