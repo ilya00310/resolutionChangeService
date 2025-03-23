@@ -1,9 +1,9 @@
 import express from 'express'
-import {addVideoFile, deleteVideo, changePermission, getFileInfo } from '../services/videoFile.services.js';
+import {addVideoFile, deleteVideo, changePermission, getFileInfo, getFileNameById } from '../services/videoFile.services.js';
 import multer from 'multer'; 
 import { validationResult, checkSchema } from 'express-validator'
 import { newPermissionSchema } from '../../schema/newPermission.schema.js';
-
+import asyncHandler from 'express-async-handler';
 /**
  * @swagger
  * components:
@@ -60,17 +60,12 @@ const upload = multer()
 *                   type: string
 *                   example: "12345"
 */
-router.route('/file').post(upload.single('video'),async (req, res) => {
-    try {
+router.route('/file').post(upload.single('video'),asyncHandler(async (req, res) => {
     const videoData = req.file
     const videoId = await addVideoFile(videoData)
     res.json({ id: videoId }).status(200)
-    }
-    catch (err) {
-        res.status(500).send({ error: err })
-    }
 })
-
+)
 /**
  * @swagger
  * /file/{id}:
@@ -94,16 +89,12 @@ router.route('/file').post(upload.single('video'),async (req, res) => {
  *                   type: boolean
  *                   example: true
  */
-router.route('/file/:id').delete(async (req,res) => {
-    try {    
+router.route('/file/:id').delete(asyncHandler(async (req,res) => {    
     const { id } = req.params;
     await deleteVideo(id)
     res.json({success: true}).status(200)
-    } catch(err) {
-        console.log(err)
-        res.json({success: false}).status(200)
-    }
 })
+)
 
 
 /**
@@ -149,21 +140,22 @@ router.route('/file/:id').delete(async (req,res) => {
  *                   example: true
  */
 
-router.route('/file/:id').patch(checkSchema(newPermissionSchema),async (req,res) => {
+router.route('/file/:id').patch(checkSchema(newPermissionSchema), asyncHandler(async (req,res) => {
     try {
     const { id } = req.params;
+    const videoName = await getFileNameById(id)
      const isValidatePermission = validationResult(req);
      if (!isValidatePermission.isEmpty()){
-        throw (false)
+        res.json({error: false}).status(400)
      }
      const newPermission = req.body;
-      changePermission(newPermission,id)
-     res.json({success: true}).status(200)
-    }catch{
-        res.json({success: false}).status(200)
-    }
+    changePermission(newPermission,videoName,id)
+    res.json({success: true}).status(200)
+     }catch (err){
+        res.status(500).json({success: false})
+     }
 })
-
+)
 
 /**
  * @swagger
@@ -198,8 +190,9 @@ router.route('/file/:id').patch(checkSchema(newPermissionSchema),async (req,res)
  *                   type: [null,boolean]
  *                   example: null
  */
-router.route('/file/:id').get(async (req,res) => {
+router.route('/file/:id').get( asyncHandler(async (req,res) => {
     const { id } = req.params;
     const fileInfo = await getFileInfo(id);
     res.json(fileInfo).status(200)
 })
+)

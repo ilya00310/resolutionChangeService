@@ -11,3 +11,5 @@ docker-compose up
 ```
 
 3. Производить соответсвующие запросы через postman или curl
+
+Адрес swagger: api/docs
