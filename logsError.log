@@ -1,0 +1,3 @@
+2025-03-23 17:35:46 [error]: NotFoundError: Video with current id don't found
+    at getFileInfo (file:///app/src/services/videoFile.services.js:169:29)
+    at async file:///app/src/routers/videoFile.routers.js:197:22

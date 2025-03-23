@@ -63,7 +63,7 @@ const upload = multer()
 router.route('/file').post(upload.single('video'),asyncHandler(async (req, res) => {
     const videoData = req.file
     const videoId = await addVideoFile(videoData)
-    res.json({ id: videoId }).status(200)
+    return res.json({ id: videoId }).status(200)
 
 })
 )
@@ -93,7 +93,7 @@ router.route('/file').post(upload.single('video'),asyncHandler(async (req, res) 
 router.route('/file/:id').delete(asyncHandler(async (req,res) => {    
     const { id } = req.params;
     await deleteVideo(id)
-    res.json({success: true}).status(200)
+    return res.json({success: true}).status(200)
 })
 )
 
@@ -144,12 +144,13 @@ router.route('/file/:id').delete(asyncHandler(async (req,res) => {
 router.route('/file/:id').patch(checkSchema(newPermissionSchema), asyncHandler(async (req,res) => {
     try {
     const { id } = req.params;
+    const newPermission = req.body;
     const videoName = await getFileNameById(id)
      const isValidatePermission = validationResult(req);
      if (!isValidatePermission.isEmpty()){
-        res.json({error: false}).status(400)
+        console.error(`New permission isn\'t even or less than 20`)
+        res.status(400).json({error: false})
      }
-     const newPermission = req.body;
     changePermission(newPermission,videoName,id)
     res.json({success: true}).status(200)
      }catch (err){
@@ -194,6 +195,6 @@ router.route('/file/:id').patch(checkSchema(newPermissionSchema), asyncHandler(a
 router.route('/file/:id').get( asyncHandler(async (req,res) => {
     const { id } = req.params;
     const fileInfo = await getFileInfo(id);
-    res.json(fileInfo).status(200)
+   return  res.json(fileInfo).status(200)
 })
 )

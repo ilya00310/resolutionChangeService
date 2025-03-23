@@ -69,7 +69,7 @@ export const deleteVideo = async (id)  => {
         try {
         await deleteVideoFile(filePath)
         } catch(err) {
-            console.error(`Error with delete file: ${err}`)
+            console.error(`Error with delete ${filePath}:`, err.stack || err.message)
         }
         await deleteVideoFromDb(id);
 }
@@ -98,7 +98,8 @@ const errorHandler = async (id, videoPath,videoOldPath,err) => {
     await deleteVideoFile(videoPath);
     await fsp.rename(videoOldPath, videoPath)
     }catch(err) {
-     console.error(`Error in errorHandler: ${err}`)
+        console.error(`Error in errorHandler for video ${id}:`, err.stack || err.message);
+        console.error(`Video path: ${videoPath}, Old video path: ${videoOldPath}`);
     }
 }
 
@@ -133,6 +134,7 @@ export const changePermission = async (newPermission, videoName,id) => {
                     await changeDbFromStartCompression(id);
                 } catch (err) {
                     await fsp.rename(videoOldPath, videoPath);
+                    console.error(`Error updating database for video ${id}:`, err.stack || err.message);                    
                     reject(err);
                 }
             })
@@ -145,6 +147,7 @@ export const changePermission = async (newPermission, videoName,id) => {
                     resolve();
                 } catch (err) {
                     await errorHandler(id, videoPath, videoOldPath, err);
+                    console.error(`Error deleting old file or updating database for video ${id}:`, err.stack || err.message);                    
                     reject(err)
                 }
             })
@@ -154,6 +157,7 @@ export const changePermission = async (newPermission, videoName,id) => {
             });
     });
 } catch(err){
+    console.error(`Error in changePermission for video ${id}:`, err.stack || err.message);
     throw err
 }
 };
