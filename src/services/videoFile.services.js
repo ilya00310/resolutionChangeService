@@ -4,7 +4,6 @@ import { existsSync } from "fs"
 import path from 'path'
 import ffmpeg from "fluent-ffmpeg"
 import createError from 'http-errors'
-
 const prisma = new PrismaClient()
 
 const getVideoPath =  (filename) => path.join(process.cwd(),'videos', filename)
@@ -37,7 +36,7 @@ export const addVideoFile =  async (fileData) => {
         try {
         const videoId = await addVideoInDb(originalname)
         return videoId
-        }catch {
+        }catch(err) {
         await deleteVideoFile(videoPath)
         throw createError(500, 'Video wasn\'t added in the database')            
         }

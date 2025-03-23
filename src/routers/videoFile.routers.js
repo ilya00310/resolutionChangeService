@@ -64,6 +64,7 @@ router.route('/file').post(upload.single('video'),asyncHandler(async (req, res) 
     const videoData = req.file
     const videoId = await addVideoFile(videoData)
     res.json({ id: videoId }).status(200)
+
 })
 )
 /**

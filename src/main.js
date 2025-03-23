@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { router } from './routers/videoFile.routers.js';
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express'
+import { logger } from '../logger.js'
 
 dotenv.config()
 const app = express();
@@ -21,13 +22,17 @@ const swaggerOptions = {
 }
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
+
 app.use(express.json())
 app.use('', router)
-app.use((error, req, res, next) => {
-    res.status(error.status) 
-    res.json({ error: error.message })
-  })
+
 app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+
+app.use((error, req, res, next) => {
+    logger.error('Error:', error); 
+    res.status(error.status || 500);
+    res.json({ error: error.message });
+});
 
 app.listen(port, () => {
         console.log(`App listen ${port}`)
