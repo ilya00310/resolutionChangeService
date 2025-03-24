@@ -83,7 +83,7 @@ const getUpdateDataForDb = (err) =>  ({
     data: newValue
 })
 const changeDbFromSuccess = async (id) =>{
- const newValue = getUpdateDataForDb()
+const newValue = getUpdateDataForDb()
 await updateDbData(id, newValue)
 }
 
@@ -115,16 +115,15 @@ const changeDbFromStartCompression = async (id) =>  {
 const getOldVideoPath = (videoName) =>{
     const [videoNameWithoutFormat, formatData] = videoName.split('.');
     const oldFileName = `${videoNameWithoutFormat}Old.${formatData}`;
-   return path.join(process.cwd(),'videos', oldFileName)
+   return getVideoPath(oldFileName)
 }
+
 export const changePermission = async (newPermission, videoName,id) => {
     try {
     const videoPath = getVideoPath(videoName);
     const videoOldPath = getOldVideoPath(videoName);
     const { width, height } = newPermission;
-
     await fsp.rename(videoPath, videoOldPath);
-
     return new Promise((resolve, reject) => {
         ffmpeg(videoOldPath)
             .size(`${width}x${height}`)
@@ -141,6 +140,7 @@ export const changePermission = async (newPermission, videoName,id) => {
             .on('end', async () => {
                 try {
                     await prisma.$transaction(async () => {
+                        console.log(3)
                         await changeDbFromSuccess(id); 
                         await deleteVideoFile(videoOldPath);
                     });
