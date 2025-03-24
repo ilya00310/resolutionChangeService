@@ -1,4 +1,1 @@
-2025-03-24 20:13:56 [error]: NotFoundError: Video don't found
-    at getFileNameById (file:///app/src/services/videoFile.services.js:53:11)
-    at async deleteVideo (file:///app/src/services/videoFile.services.js:67:22)
-    at async file:///app/src/routers/videoFile.routers.js:95:5
+
